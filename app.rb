@@ -36,7 +36,8 @@ get '/owners' do
   begin
     connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
 
-    get_owners = connection.exec 'SELECT * FROM "owners";'
+    get_owners = connection.exec 'SELECT * FROM "owners"
+    JOIN "pets" ON "pets".owner_id = "owners".id;'
 
     get_owners.each do |s_owner|
       owners.push({ id: s_owner['id'], name: s_owner['name'] })
@@ -45,24 +46,23 @@ get '/owners' do
   end
 end
 
-get '/owners' do
+post '/owners' do
   content_type :json
-  owners = []
+
+  request.body.rewind
+  owner = JSON.parse(request.body.read)
+
   begin
-    connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
 
-    get_owners = connection.exec 'SELECT * FROM "owners"
-    JOIN "pets" ON "pets".owner_id = "owners".id;'
-
-    get_owners.each do |s_owner|
-      owners.push({ id: s_owner['id'], name: s_owner['name']})
-    end
-  owners.to_json
+    connection.exec "INSERT INTO owners(name) VALUES('#{owner["name"]}');"
   end
-  # pets = Pets.all
-  # pets.to_json
+  # if owner.save
+  #   status 201
+  # else 
+  #   status 500
+  # end
 end
-
 
 post '/pets' do
   content_type :json
