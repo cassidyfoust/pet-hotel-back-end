@@ -18,7 +18,7 @@ get '/pets' do
   content_type :json
   pets = []
   begin
-    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
 
     get_pets = connection.exec 'SELECT * FROM "pets"
     JOIN "owners" ON "pets".owner_id = "owners".id;'
@@ -34,9 +34,11 @@ get '/owners' do
   content_type :json
   owners = []
   begin
-    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
 
-    get_owners = connection.exec 'SELECT * FROM "owners";'
+    get_owners = connection.exec 'SELECT * FROM "owners"
+    JOIN "pets" ON "pets".owner_id = "owners".id;'
+
 
     get_owners.each do |s_owner|
       owners.push({ id: s_owner['id'], name: s_owner['name'] })
@@ -63,17 +65,25 @@ post '/owners' do
   # end
 end
 
-# post '/pets' do
-#   content_type :json
+post '/pets' do
+  content_type :json
+  addPet = JSON.parse(request.body.read)
 
-#   pets = Pets.new params[:pets]
-#   if pets.save
-#     status 201
-#   else 
-#     status 500
-#     json pets.errors.full_messages
-#   end
-# end
+  begin
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
+
+    response = connection.exec "INSERT INTO pets (pet_name, breed, color, checked_in, owner_id)
+    VALUES ('#{addPet['name']}','#{addPet['color']}','#{addPet['breed']}',#{addPet['checkedIn']},#{Integer(addPet['owner'])});"
+
+  end
+
+  # if pets.save
+  #   status 201
+  # else 
+  #   status 500
+  #   json pets.errors.full_messages
+  # end
+end
 
 # put '/pets/:id' do
 #   content_type :json
