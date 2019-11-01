@@ -14,15 +14,11 @@ DataMapper.auto_migrate!
 set :bind, '0.0.0.0'
 set :port, 4567
 
-get '/' do
- "Hello World!"
-end
-
 get '/pets' do
   content_type :json
   pets = []
   begin
-    connection = PG.connect :dbname => 'pet_hotel', :user => 'cassidyfoust'
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
 
     get_pets = connection.exec 'SELECT * FROM "pets"
     JOIN "owners" ON "pets".owner_id = "owners".id;'
@@ -32,8 +28,21 @@ get '/pets' do
     end
   pets.to_json
   end
-  # pets = Pets.all
-  # pets.to_json
+end
+
+get '/owners' do
+  content_type :json
+  owners = []
+  begin
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
+
+    get_owners = connection.exec 'SELECT * FROM "owners";'
+
+    get_owners.each do |s_owner|
+      owners.push({ id: s_owner['id'], name: s_owner['name'] })
+    end
+  owners.to_json
+  end
 end
 
 
