@@ -24,7 +24,7 @@ get '/pets' do
     JOIN "owners" ON "pets".owner_id = "owners".id;'
 
     get_pets.each do |s_pet|
-      pets.push({ id: s_pet['id'], name: s_pet['pet_name'], breed: s_pet['breed'], color: s_pet['color'], checked_in: s_pet['checked_in'], owner_id: s_pet['owner_id'], owner_name: s_pet['name'] })
+      pets.push({ id: s_pet['id'], pet_name: s_pet['pet_name'], breed: s_pet['breed'], color: s_pet['color'], checked_in: s_pet['checked_in'], owner_id: s_pet['owner_id'], owner_name: s_pet['name'] })
     end
   pets.to_json
   end
