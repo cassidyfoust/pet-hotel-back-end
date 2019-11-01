@@ -45,6 +45,23 @@ get '/owners' do
   end
 end
 
+post '/owners' do
+  content_type :json
+
+  request.body.rewind
+  owner = JSON.parse(request.body.read)
+
+  begin
+    connection = PG.connect :dbname => 'pet_hotel', :user => 'Nathan', :password => 'Nathan'
+
+    connection.exec "INSERT INTO owners(name) VALUES('#{owner["name"]}');"
+  end
+  # if owner.save
+  #   status 201
+  # else 
+  #   status 500
+  # end
+end
 
 # post '/pets' do
 #   content_type :json
